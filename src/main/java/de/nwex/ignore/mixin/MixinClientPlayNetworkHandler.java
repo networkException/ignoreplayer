@@ -19,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Mixin(ClientPlayNetworkHandler.class)
@@ -36,7 +38,22 @@ public class MixinClientPlayNetworkHandler
         String formatted = chatMessageS2CPacket.getMessage().asFormattedString();
         String escaped = formatted.replace("[<" + Arrays.stream(Formatting.values()).map(Formatting::toString).collect(Collectors.joining(", ")) + ">]", "");
 
+        Pattern coolPattern = Pattern.compile("^§.§.§.([A-Z]+)§r §.([A-Za-z_0-9]{1,16})§.: §r(.+)$");
+        Matcher coolMatcher = coolPattern.matcher(chatMessageS2CPacket.getMessage().asFormattedString().replace("\n", "").trim());
 
+        Pattern simplyPattern = Pattern.compile("^<([A-Za-z_0-9]{1,16})> (.+)$");
+        Matcher simplyMatcher = simplyPattern.matcher(chatMessageS2CPacket.getMessage().asFormattedString().replace("\n", "").trim());
+
+        if((coolMatcher.matches() && IgnorePlayer.ignored.contains(coolMatcher.group(2))) || (simplyMatcher.matches() && IgnorePlayer.ignored.contains(simplyMatcher.group(1))))
+        {
+            System.out.println("Ignored: " + escaped);
+
+            ci.cancel();
+            return;
+        }
+
+        this.client.inGameHud.addChatMessage(chatMessageS2CPacket.getLocation(), chatMessageS2CPacket.getMessage());
+        ci.cancel();
     }
 
     @SuppressWarnings("unchecked")
