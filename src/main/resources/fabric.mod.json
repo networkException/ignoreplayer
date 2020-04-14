@@ -1,35 +1,36 @@
 {
-  "schemaVersion": 1,
-  "id": "clientcommands",
-  "name": "Client Commands",
-  "description": "Useful client-side commands",
-  "version": "${version}",
-  "environment": "client",
-  "license": "MIT",
-  "icon": "assets/clientcommands/icon.png",
-  "contact": {
-    "homepage": "https://earthcomputer.net/",
-    "issues": "https://github.com/Earthcomputer/clientcommands/issues"
-  },
-  "authors": [
-    "Earthcomputer"
-  ],
-  "contributors": [
-    "cortex"
-  ],
-  "entrypoints": {
-    "client": [
-      "net.earthcomputer.clientcommands.ClientCommands"
-    ]
-  },
-  "depends": {
-    "fabricloader": ">=0.4.0",
-    "fabric": "*"
-  },
-  "mixins": [
-    "mixins.clientcommands.json"
-  ],
-  "custom": {
-    "modmenu:clientsideOnly": true
-  }
+    "schemaVersion": 1,
+    "id": "ignoreplayer",
+    "name": "ignorePlayer",
+    "description": "Ignores players in chat",
+    "version": "${version}",
+    "environment": "client",
+    "license": "MIT",
+    "icon": "assets/ignoreplayer/icon.png",
+    "contact": {
+        "homepage": "https://nwex.de/",
+        "issues": "https://github.com/networkexception/ignoreplayer/issues"
+    },
+    "authors": [
+        "networkException"
+    ],
+    "contributors": [
+        "cortex",
+        "Earthcomputer"
+    ],
+    "entrypoints": {
+        "client": [
+            "de.nwex.ignore.IgnorePlayer"
+        ]
+    },
+    "depends": {
+        "fabricloader": ">=0.4.0",
+        "fabric": "*"
+    },
+    "mixins": [
+        "mixins.ignoreplayer.json"
+    ],
+    "custom": {
+        "modmenu:clientsideOnly": true
+    }
 }

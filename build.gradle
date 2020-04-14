@@ -25,6 +25,9 @@ dependencies {
 	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
+	modApi group: 'org.json', name: 'json', version: '20190722'
+	include group: 'org.json', name: 'json', version: '20190722'
+
 	modApi('net.earthcomputer:multiconnect:1.2.1:api') {
 		transitive = false
 	}

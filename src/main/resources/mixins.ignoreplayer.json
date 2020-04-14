@@ -1,0 +1,14 @@
+{
+    "required": true,
+    "package": "de.nwex.ignore.mixin",
+    "compatibilityLevel": "JAVA_8",
+    "mixins": [
+        "MixinCommandSuggestor",
+        "MixinClientPlayNetworkHandler",
+        "MixinTextFieldWidget",
+        "MixinPlayerListHud"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
