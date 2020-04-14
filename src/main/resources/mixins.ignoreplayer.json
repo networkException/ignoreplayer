@@ -6,7 +6,8 @@
         "MixinCommandSuggestor",
         "MixinClientPlayNetworkHandler",
         "MixinTextFieldWidget",
-        "MixinPlayerListHud"
+        "MixinPlayerListHud",
+        "MixinClientPlayerEntity"
     ],
     "injectors": {
         "defaultRequire": 1
