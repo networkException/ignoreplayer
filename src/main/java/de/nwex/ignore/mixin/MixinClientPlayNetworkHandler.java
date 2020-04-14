@@ -29,6 +29,9 @@ import java.util.stream.Collectors;
 @Mixin(ClientPlayNetworkHandler.class)
 public class MixinClientPlayNetworkHandler
 {
+    private Pattern coolPattern = Pattern.compile("^§.§.§.([A-Z]+)§r §.([A-Za-z_0-9]{1,16})§.: §r(.+)$");
+    private Pattern simplyPattern = Pattern.compile("^<([A-Za-z_0-9]{1,16})> (.+)$");
+
     @Shadow
     private CommandDispatcher<CommandSource> commandDispatcher;
 
@@ -43,10 +46,7 @@ public class MixinClientPlayNetworkHandler
         String formatted = chatMessageS2CPacket.getMessage().asFormattedString();
         String escaped = formatted.replace("[<" + Arrays.stream(Formatting.values()).map(Formatting::toString).collect(Collectors.joining(", ")) + ">]", "");
 
-        Pattern coolPattern = Pattern.compile("^§.§.§.([A-Z]+)§r §.([A-Za-z_0-9]{1,16})§.: §r(.+)$");
         Matcher coolMatcher = coolPattern.matcher(chatMessageS2CPacket.getMessage().asFormattedString().replace("\n", "").trim());
-
-        Pattern simplyPattern = Pattern.compile("^<([A-Za-z_0-9]{1,16})> (.+)$");
         Matcher simplyMatcher = simplyPattern.matcher(chatMessageS2CPacket.getMessage().asFormattedString().replace("\n", "").trim());
 
         if((coolMatcher.matches() && IgnorePlayer.ignored.contains(coolMatcher.group(2))) || (simplyMatcher.matches() && IgnorePlayer.ignored.contains(simplyMatcher.group(1))))
