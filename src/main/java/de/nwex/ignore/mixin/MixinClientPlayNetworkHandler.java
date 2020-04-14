@@ -2,15 +2,18 @@ package de.nwex.ignore.mixin;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
+import de.nwex.ignore.Chat;
 import de.nwex.ignore.IgnorePlayer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.packet.ChatMessageS2CPacket;
 import net.minecraft.client.network.packet.CommandTreeS2CPacket;
+import net.minecraft.client.network.packet.GameJoinS2CPacket;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,6 +34,8 @@ public class MixinClientPlayNetworkHandler
 
     @Shadow
     private MinecraftClient client;
+
+    private Boolean once = true;
 
     @Inject(method = "onChatMessage", at = @At("HEAD"), cancellable = true)
     public void onChatMessage(ChatMessageS2CPacket chatMessageS2CPacket, CallbackInfo ci)
@@ -54,6 +59,33 @@ public class MixinClientPlayNetworkHandler
 
         this.client.inGameHud.addChatMessage(chatMessageS2CPacket.getLocation(), chatMessageS2CPacket.getMessage());
         ci.cancel();
+    }
+
+    @Inject(method = "onGameJoin", at = @At("HEAD"))
+    public void onGameJoin(GameJoinS2CPacket packet, CallbackInfo ci)
+    {
+        if(once)
+        {
+            once = false;
+
+            new Thread(() ->
+            {
+                try
+                {
+                    Thread.sleep(1000);
+                }
+                catch(InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+
+                Chat.print(new LiteralText("Loaded"), new LiteralText("")
+                    .append(new LiteralText("Ignoring ").formatted(IgnorePlayer.BASE))
+                    .append(new LiteralText(String.valueOf(IgnorePlayer.ignored.size())).formatted(IgnorePlayer.HIGHLIGHT))
+                    .append(new LiteralText(" player(s)").formatted(IgnorePlayer.BASE))
+                );
+            }).start();
+        }
     }
 
     @SuppressWarnings("unchecked")
