@@ -6,6 +6,10 @@ import de.nwex.ignore.command.ClientPlayerOrStringArgumentType;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Style;
 import net.minecraft.util.Formatting;
 
 import java.io.File;
@@ -55,14 +59,24 @@ public class IgnorePlayer implements ClientModInitializer
                         ignored.remove(player);
                         ConfigManager.set();
 
-                        Chat.print("Unignored player '" + ClientPlayerOrStringArgumentType.getArgument(context, "player") + "'");
+                        Chat.print(new LiteralText("Log"), new LiteralText("")
+                            .append(new LiteralText("Unignored player ").formatted(BASE))
+                            .append(ClientPlayerOrStringArgumentType.getArgument(context, "player")).formatted(HIGHLIGHT)
+                                .setStyle(new Style()
+                                    .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to copy")))
+                                    .setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, ClientPlayerOrStringArgumentType.getArgument(context, "player")))));
                     }
                     else
                     {
                         ignored.add(player);
                         ConfigManager.set();
 
-                        Chat.print("Ignored player '" + ClientPlayerOrStringArgumentType.getArgument(context, "player") + "'");
+                        Chat.print(new LiteralText("Log"), new LiteralText("")
+                            .append(new LiteralText("Ignored player ").formatted(BASE))
+                            .append(ClientPlayerOrStringArgumentType.getArgument(context, "player")).formatted(HIGHLIGHT)
+                            .setStyle(new Style()
+                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to copy")))
+                                .setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, ClientPlayerOrStringArgumentType.getArgument(context, "player")))));
                     }
 
                     return -1;
@@ -70,7 +84,13 @@ public class IgnorePlayer implements ClientModInitializer
             .executes((context) ->
             {
                 Chat.print("Currently ignored players: ");
-                ignored.forEach(Chat::print);
+
+                ignored.forEach((player) ->
+                    Chat.print(new LiteralText("Log"), new LiteralText("")
+                        .append(player).formatted(HIGHLIGHT)
+                        .setStyle(new Style()
+                            .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to copy")))
+                            .setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, player)))));
 
                 return 1;
             }));
