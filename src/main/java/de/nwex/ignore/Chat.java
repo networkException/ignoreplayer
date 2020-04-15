@@ -14,7 +14,7 @@ public class Chat
             .append(new LiteralText("] ").formatted(IgnorePlayer.DARK))
             .append(prefix.formatted(IgnorePlayer.BASE))
             .append(new LiteralText(" > ").formatted(IgnorePlayer.ACCENT))
-            .append(message.formatted(IgnorePlayer.BASE));
+            .append(message);
 
         MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(chat);
     }
@@ -27,7 +27,7 @@ public class Chat
             .append(new LiteralText("] ").formatted(IgnorePlayer.DARK))
             .append(new LiteralText(prefix).formatted(IgnorePlayer.BASE))
             .append(new LiteralText(" > ").formatted(IgnorePlayer.ACCENT))
-            .append(new LiteralText(message).formatted(IgnorePlayer.BASE));
+            .append(new LiteralText(message));
 
         MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(chat);
     }

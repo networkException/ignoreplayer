@@ -61,10 +61,10 @@ public class IgnorePlayer implements ClientModInitializer
 
                         Chat.print(new LiteralText("Log"), new LiteralText("")
                             .append(new LiteralText("Unignored player ").formatted(BASE))
-                            .append(ClientPlayerOrStringArgumentType.getArgument(context, "player")).formatted(HIGHLIGHT)
+                            .append(new LiteralText(ClientPlayerOrStringArgumentType.getArgument(context, "player")).formatted(HIGHLIGHT)
                                 .setStyle(new Style()
                                     .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to copy")))
-                                    .setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, ClientPlayerOrStringArgumentType.getArgument(context, "player")))));
+                                    .setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, ClientPlayerOrStringArgumentType.getArgument(context, "player"))))));
                     }
                     else
                     {
@@ -73,21 +73,21 @@ public class IgnorePlayer implements ClientModInitializer
 
                         Chat.print(new LiteralText("Log"), new LiteralText("")
                             .append(new LiteralText("Ignored player ").formatted(BASE))
-                            .append(ClientPlayerOrStringArgumentType.getArgument(context, "player")).formatted(HIGHLIGHT)
-                            .setStyle(new Style()
-                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to copy")))
-                                .setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, ClientPlayerOrStringArgumentType.getArgument(context, "player")))));
+                            .append(new LiteralText(ClientPlayerOrStringArgumentType.getArgument(context, "player")).formatted(HIGHLIGHT)
+                                .setStyle(new Style()
+                                    .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to copy")))
+                                    .setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, ClientPlayerOrStringArgumentType.getArgument(context, "player"))))));
                     }
 
                     return -1;
                 }))
             .executes((context) ->
             {
-                Chat.print("Currently ignored players: ");
+                Chat.print(new LiteralText("Log"), new LiteralText("Currently ignored players:").formatted(BASE));
 
                 ignored.forEach((player) ->
-                    Chat.print(new LiteralText("Log"), new LiteralText("")
-                        .append(player).formatted(HIGHLIGHT)
+                    Chat.print(new LiteralText("Log"), new LiteralText(player)
+                        .formatted(HIGHLIGHT)
                         .setStyle(new Style()
                             .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to copy")))
                             .setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, player)))));
