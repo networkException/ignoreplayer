@@ -14,5 +14,5 @@ Ignored players are marked in the tablist
 
 Ignores players are stored in form of a json array in .minecraft/config/ingoreplayer/player.json
 
-Requires fabric, tested in 1.15.2
+Requires fabric, tested in 1.16.1
 
