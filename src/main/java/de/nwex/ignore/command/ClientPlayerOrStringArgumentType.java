@@ -6,13 +6,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.command.EntitySelectorReader;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.command.CommandSource;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.util.math.Vec3d;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -21,63 +14,60 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+import net.minecraft.command.EntitySelectorReader;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.command.CommandSource;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.util.math.Vec3d;
 
-public class ClientPlayerOrStringArgumentType implements ArgumentType<String>
-{
+public class ClientPlayerOrStringArgumentType implements ArgumentType<String> {
+
     private static final Collection<String> EXAMPLES = Arrays.asList("networkException", "quiquelhappy");
 
-    private ClientPlayerOrStringArgumentType()
-    {
+    private ClientPlayerOrStringArgumentType() {
     }
 
-    public static ClientPlayerOrStringArgumentType argument()
-    {
+    public static ClientPlayerOrStringArgumentType argument() {
         return new ClientPlayerOrStringArgumentType();
     }
 
-    public static String getArgument(CommandContext<ServerCommandSource> context, String arg)
-    {
+    public static String getArgument(CommandContext<ServerCommandSource> context, String arg) {
         return context.getArgument(arg, String.class);
     }
 
     @Override
-    public String parse(StringReader reader)
-    {
+    public String parse(StringReader reader) {
         return reader.readUnquotedString();
     }
 
     @Override
-    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
-    {
-        if(context.getSource() instanceof CommandSource)
-        {
+    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+        if (context.getSource() instanceof CommandSource) {
             StringReader reader = new StringReader(builder.getInput());
             reader.setCursor(builder.getStart());
             CommandSource source = (CommandSource) context.getSource();
             Parser parser = new Parser(reader);
 
-            try
-            {
+            try {
                 parser.parse();
+            } catch (CommandSyntaxException ignore) {
             }
-            catch(CommandSyntaxException ignore) {}
 
             return parser.listSuggestions(builder, b -> CommandSource.suggestMatching(source.getPlayerNames(), b));
         }
-        else
-        {
+        else {
             return Suggestions.empty();
         }
     }
 
     @Override
-    public Collection<String> getExamples()
-    {
+    public Collection<String> getExamples() {
         return ClientPlayerOrStringArgumentType.EXAMPLES;
     }
 
-    static class Parser
-    {
+    static class Parser {
+
         private static final BiConsumer<Vec3d, List<Entity>> UNSORTED = (origin, list) ->
         {
         };
@@ -91,13 +81,11 @@ public class ClientPlayerOrStringArgumentType implements ArgumentType<String>
         private Double originY = null;
         private Double originZ = null;
 
-        Parser(StringReader reader)
-        {
+        Parser(StringReader reader) {
             this.reader = reader;
         }
 
-        ClientEntitySelector parse() throws CommandSyntaxException
-        {
+        ClientEntitySelector parse() throws CommandSyntaxException {
             suggestor = this::suggestStart;
 
             parsePlayerName();
@@ -106,10 +94,8 @@ public class ClientPlayerOrStringArgumentType implements ArgumentType<String>
             return new ClientEntitySelector(filter, sorter, limit, false, originX, originY, originZ);
         }
 
-        void parsePlayerName() throws CommandSyntaxException
-        {
-            if(reader.canRead())
-            {
+        void parsePlayerName() throws CommandSyntaxException {
+            if (reader.canRead()) {
                 int start = reader.getCursor();
                 suggestor = (builder, playerNameSuggestor) ->
                 {
@@ -122,8 +108,7 @@ public class ClientPlayerOrStringArgumentType implements ArgumentType<String>
 
             int start = reader.getCursor();
             String playerName = reader.readString();
-            if(playerName.isEmpty() || playerName.length() > 16)
-            {
+            if (playerName.isEmpty() || playerName.length() > 16) {
                 reader.setCursor(start);
                 throw EntitySelectorReader.INVALID_ENTITY_EXCEPTION.createWithContext(reader);
             }
@@ -132,26 +117,22 @@ public class ClientPlayerOrStringArgumentType implements ArgumentType<String>
             limit = 1;
         }
 
-        void addFilter(BiPredicate<Vec3d, Entity> filter)
-        {
+        void addFilter(BiPredicate<Vec3d, Entity> filter) {
             final BiPredicate<Vec3d, Entity> prevFilter = this.filter;
             this.filter = (origin, entity) -> filter.test(origin, entity) && prevFilter.test(origin, entity);
         }
 
-        CompletableFuture<Suggestions> listSuggestions(SuggestionsBuilder builder, Consumer<SuggestionsBuilder> playerNameSuggestor)
-        {
+        CompletableFuture<Suggestions> listSuggestions(SuggestionsBuilder builder, Consumer<SuggestionsBuilder> playerNameSuggestor) {
             return suggestor.apply(builder.createOffset(reader.getCursor()), playerNameSuggestor);
         }
 
-        private CompletableFuture<Suggestions> suggestStart(SuggestionsBuilder builder, Consumer<SuggestionsBuilder> playerNameSuggestor)
-        {
+        private CompletableFuture<Suggestions> suggestStart(SuggestionsBuilder builder, Consumer<SuggestionsBuilder> playerNameSuggestor) {
             playerNameSuggestor.accept(builder);
             suggestAtSelectors(builder, playerNameSuggestor);
             return builder.buildFuture();
         }
 
-        private CompletableFuture<Suggestions> suggestAtSelectors(SuggestionsBuilder builder, Consumer<SuggestionsBuilder> playerNameSuggestor)
-        {
+        private CompletableFuture<Suggestions> suggestAtSelectors(SuggestionsBuilder builder, Consumer<SuggestionsBuilder> playerNameSuggestor) {
             return builder.buildFuture();
         }
     }

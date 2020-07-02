@@ -16,8 +16,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(CommandSuggestor.class)
-public class MixinCommandSuggestor
-{
+public class MixinCommandSuggestor {
+
     @Shadow
     private ParseResults<CommandSource> parse;
 
@@ -27,34 +27,30 @@ public class MixinCommandSuggestor
 
     @Unique
     private int oldMaxLength;
+
     @Unique
     private boolean wasClientCommand = false;
 
     @Inject(method = "refresh", at = @At("RETURN"))
-    private void onRefresh(CallbackInfo ci)
-    {
+    private void onRefresh(CallbackInfo ci) {
         boolean isClientCommand;
 
-        if(parse == null)
-        {
+        if (parse == null) {
             isClientCommand = false;
         }
-        else
-        {
+        else {
             StringReader reader = new StringReader(parse.getReader().getString());
             reader.skip();
             String command = reader.canRead() ? reader.readUnquotedString() : "";
             isClientCommand = ClientCommandManager.isClientSideCommand(command);
         }
 
-        if(isClientCommand && !wasClientCommand)
-        {
+        if (isClientCommand && !wasClientCommand) {
             wasClientCommand = true;
             oldMaxLength = ((ITextFieldWidget) textField).clientCommandsGetMaxLength();
             textField.setMaxLength(Math.max(oldMaxLength, 32500));
         }
-        else if(!isClientCommand && wasClientCommand)
-        {
+        else if (!isClientCommand && wasClientCommand) {
             wasClientCommand = false;
             textField.setMaxLength(oldMaxLength);
         }

@@ -9,13 +9,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerEntity.class)
-public class MixinClientPlayerEntity
-{
+public class MixinClientPlayerEntity {
+
     @Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
-    private void onSendChatMessage(String message, CallbackInfo ci)
-    {
-        if(message.startsWith("/"))
-        {
+    private void onSendChatMessage(String message, CallbackInfo ci) {
+        if (message.startsWith("/")) {
             StringReader reader = new StringReader(message);
             reader.skip();
 
@@ -24,8 +22,7 @@ public class MixinClientPlayerEntity
             String commandName = reader.canRead() ? reader.readUnquotedString() : "";
             reader.setCursor(cursor);
 
-            if(ClientCommandManager.isClientSideCommand(commandName))
-            {
+            if (ClientCommandManager.isClientSideCommand(commandName)) {
                 ClientCommandManager.executeCommand(reader, message);
                 ci.cancel();
             }

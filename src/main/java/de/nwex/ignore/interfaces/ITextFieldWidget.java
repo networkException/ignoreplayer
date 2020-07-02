@@ -1,6 +1,6 @@
 package de.nwex.ignore.interfaces;
 
-public interface ITextFieldWidget
-{
+public interface ITextFieldWidget {
+
     int clientCommandsGetMaxLength();
 }

@@ -1,6 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.2.7-SNAPSHOT'
-	id 'maven-publish'
+	id 'fabric-loom' version '0.4-SNAPSHOT'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -10,15 +9,6 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
-minecraft {
-}
-
-repositories {
-	maven {
-		url 'https://dl.bintray.com/earthcomputer/mods'
-	}
-}
-
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
@@ -27,13 +17,6 @@ dependencies {
 
 	modApi group: 'org.json', name: 'json', version: '20190722'
 	include group: 'org.json', name: 'json', version: '20190722'
-
-	modApi('net.earthcomputer:multiconnect:1.2.1:api') {
-		transitive = false
-	}
-	include('net.earthcomputer:multiconnect:1.2.1:api') {
-		transitive = false
-	}
 }
 
 processResources {
@@ -60,21 +43,4 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 jar {
 	from "LICENSE"
-}
-
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			artifact(jar) {
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
-		}
-	}
-
-	repositories {
-		// mavenLocal()
-	}
 }
